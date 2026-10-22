@@ -10,6 +10,8 @@ Qualtrics (polled on a schedule) → export job started → wait for export to c
 
 See the project report PDF (`Experiment Response Monitor - Project Report.pdf`, in this repo) for the full labeled diagram and appendix screenshots.
 
+![Error-handler workflow diagram](docs/error-handler-diagram.png)
+
 A parallel error workflow (Error Trigger → Slack) is attached via workflow Settings → Error Workflow, so any unhandled failure in the main workflow also alerts separately with the workflow name and a link to the failed execution.
 
 ## Running it (self-hosted via Docker)
