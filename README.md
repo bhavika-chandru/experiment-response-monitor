@@ -6,6 +6,8 @@
 
 Qualtrics (polled on a schedule) → export job started → wait for export to complete → download + unzip + parse responses → split into individual items → duplicate check against the log → validation (incomplete / failed attention check / duration outlier / condition mismatch / clean) → log every response → Slack alert on anything flagged.
 
+![Workflow architecture diagram](docs/architecture-diagram.png)
+
 See the project report PDF (`Experiment Response Monitor - Project Report.pdf`, in this repo) for the full labeled diagram and appendix screenshots.
 
 A parallel error workflow (Error Trigger → Slack) is attached via workflow Settings → Error Workflow, so any unhandled failure in the main workflow also alerts separately with the workflow name and a link to the failed execution.
