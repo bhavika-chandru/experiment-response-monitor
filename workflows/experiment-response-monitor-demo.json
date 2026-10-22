@@ -1,0 +1,1322 @@
+{
+  "name": "Experiment Response Monitor (dev) demo",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        288
+      ],
+      "id": "e1283d59-38d9-47b1-b78b-9f2004ca2314",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"response_id\": \"R_51\",\n  \"response_id\": \"R_{{$now.toMillis()}}\",\n  \"session_id\": \"S1\",\n  \"timestamp\": \"2026-10-08T10:00:00Z\",\n  \"condition\": \"water\",\n  \"embedded_condition\": \"water\",\n  \"attention_check\": \"correct\",\n  \"duration_sec\": 420\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        288
+      ],
+      "id": "d86e2246-4593-43bb-85af-5c258c6f5efa",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1MHJvQvZoxIHINDHOLJm23wUJVQJdazcYZHqw6cCm780",
+          "mode": "list",
+          "cachedResultName": "Experiment Response Monitor Log",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MHJvQvZoxIHINDHOLJm23wUJVQJdazcYZHqw6cCm780/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MHJvQvZoxIHINDHOLJm23wUJVQJdazcYZHqw6cCm780/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        672,
+        304
+      ],
+      "id": "84570cb2-1e6a-44a2-ad27-ac167cf1a9f6",
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tH23hWjhVtWXWrx7",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ !$json.participant_id || !$json.condition }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "2a1d7325-b473-417f-a7a1-d230de42c10f"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "incomplete"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "88b99cdd-ab1b-4823-aa3b-c117489584ea",
+                    "leftValue": "={{ $json.attention_check !== \"correct\" }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "attention_check_fail"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "f80fb59f-2d20-44f3-bee1-3bc73d94d927",
+                    "leftValue": "={{ $json.duration_sec < 60 || $json.duration_sec > 1800 }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "duration_outlier"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "c73f8a50-cb7d-49b1-be7d-d4752cf57b66",
+                    "leftValue": "={{ $json.condition !== $json.embedded_condition }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "branch_mismatch"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "270dc054-b99d-418c-945e-7443d12330d1",
+                    "leftValue": "={{ true }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "clean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1312,
+        256
+      ],
+      "id": "fe008e69-d764-45b4-be45-a7ce3c3b2a30",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c77e8d70-abbb-44f0-b4c6-ce647f0ddebc",
+              "name": "flag",
+              "value": "incomplete",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1536,
+        0
+      ],
+      "id": "a12f0a57-4d14-42d3-953c-79beb5bea4c0",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c77e8d70-abbb-44f0-b4c6-ce647f0ddebc",
+              "name": "flag",
+              "value": "attention_check_fail",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1536,
+        176
+      ],
+      "id": "b4ccf8dc-752a-4d42-a4d5-7bb7f832b4eb",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c77e8d70-abbb-44f0-b4c6-ce647f0ddebc",
+              "name": "flag",
+              "value": "duration_outlier",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1536,
+        320
+      ],
+      "id": "c15413ac-8927-42de-8260-b7999ce43d3a",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c77e8d70-abbb-44f0-b4c6-ce647f0ddebc",
+              "name": "flag",
+              "value": "branch_mismatch",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1536,
+        480
+      ],
+      "id": "8d8e6146-ea18-4804-9fdb-52e56b25205c",
+      "name": "Edit Fields4"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c77e8d70-abbb-44f0-b4c6-ce647f0ddebc",
+              "name": "flag",
+              "value": "clean",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1536,
+        640
+      ],
+      "id": "a5e0df0f-cbcc-4a6b-9bc7-35a674256359",
+      "name": "Edit Fields5"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1MHJvQvZoxIHINDHOLJm23wUJVQJdazcYZHqw6cCm780",
+          "mode": "list",
+          "cachedResultName": "Experiment Response Monitor Log",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MHJvQvZoxIHINDHOLJm23wUJVQJdazcYZHqw6cCm780/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MHJvQvZoxIHINDHOLJm23wUJVQJdazcYZHqw6cCm780/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "response_id": "={{ $json.response_id }}",
+            "participant_id": "={{ $json.participant_id }}",
+            "timestamp": "={{ $json.timestamp }}",
+            "flag": "={{ $json.flag }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "response_id",
+              "displayName": "response_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "participant_id",
+              "displayName": "participant_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "flag",
+              "displayName": "flag",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "note",
+              "displayName": "note",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2176,
+        304
+      ],
+      "id": "e2f3f0f6-6adb-4bf7-8b9c-5e1ab918a27c",
+      "name": "Append row in sheet",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tH23hWjhVtWXWrx7",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "71978a02-c952-4fe3-87b6-96081bb3f6ef",
+              "leftValue": "={{ $json.flag }}",
+              "rightValue": "clean",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2400,
+        304
+      ],
+      "id": "e3852987-6f01-428c-9f32-f551843440b4",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0C7NGG3961",
+          "mode": "list",
+          "cachedResultName": "lab-monitor-test"
+        },
+        "text": "=Response flagged: {{ $json.participant_id }}\n   Reason: {{ { incomplete: \"missing required fields (participant ID or condition)\", attention_check_fail: \"failed the attention check question\", duration_outlier: \"completion time outside the normal 1–30 min range\", branch_mismatch: \"survey condition didn't match the assigned condition\" }[$json.flag] }}\n   Time recorded: {{ $json.timestamp }}\n   ",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        2864,
+        288
+      ],
+      "id": "cee01beb-3373-407c-98bf-d43697963804",
+      "name": "Send a message",
+      "webhookId": "419beb6e-6061-4019-bbbc-87a59521f373",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "slackApi": {
+          "id": "Mj5nPQsv8mtaZVdp",
+          "name": "Slack account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "   https://yul1.qualtrics.com/API/v3/surveys/SV_29N2rjIwNk39eMC/export-responses/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"format\": \"json\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        256,
+        816
+      ],
+      "id": "c9d9281d-e917-4b27-a931-e56f3e7177e2",
+      "name": "Start Export",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "60GTDOLE8ydH8XzV",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        816
+      ],
+      "id": "44279200-ef7f-48a8-a44d-7899bfea9ebd",
+      "name": "Wait",
+      "webhookId": "4b0f607b-0856-4e96-aa91-313f41f163c4"
+    },
+    {
+      "parameters": {
+        "url": "=   https://yul1.qualtrics.com/API/v3/surveys/SV_29N2rjIwNk39eMC/export-responses/{{ $('Start Export').item.json.result.progressId }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        704,
+        816
+      ],
+      "id": "cb089de5-1dfc-4a5f-9254-251151443e4b",
+      "name": "Check Export Status",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "60GTDOLE8ydH8XzV",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=   https://yul1.qualtrics.com/API/v3/surveys/SV_29N2rjIwNk39eMC/export-responses/{{ $json.result.fileId }}/file",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1136,
+        816
+      ],
+      "id": "706eeba5-afe5-474b-8ecf-dead26bd1931",
+      "name": "Download Export",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "60GTDOLE8ydH8XzV",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.compression",
+      "typeVersion": 1.1,
+      "position": [
+        1360,
+        816
+      ],
+      "id": "5a7c2778-bb3b-456e-bff5-7fcdd5489ed5",
+      "name": "Unzip Export"
+    },
+    {
+      "parameters": {
+        "operation": "fromJson",
+        "binaryPropertyName": "file_0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        1584,
+        816
+      ],
+      "id": "d2a9477c-9b17-4d61-a7c0-556dbf07e27f",
+      "name": "Parse Responses"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data.responses",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1808,
+        816
+      ],
+      "id": "b3488580-b982-4d9a-9036-81e6414018b3",
+      "name": "Split Responses"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2482837c-00d4-411e-8584-a9079a0582ce",
+              "name": "=response_id",
+              "value": "={{ $json.responseId }}",
+              "type": "string"
+            },
+            {
+              "id": "99447cc5-3390-4c1c-b816-9862dfb0913d",
+              "name": "=participant_id",
+              "value": "={{ $json.values.QID1_TEXT }}",
+              "type": "string"
+            },
+            {
+              "id": "e7141491-bb4c-4e1c-9620-00b0236dfed7",
+              "name": "=timestamp",
+              "value": "={{ $json.values.endDate }}",
+              "type": "string"
+            },
+            {
+              "id": "7adb2940-18ec-4880-b5aa-424a4d2c2784",
+              "name": "condition",
+              "value": "=demo",
+              "type": "string"
+            },
+            {
+              "id": "1bfedd4b-fed6-4acb-87ca-8d50b43b655b",
+              "name": "embedded_condition",
+              "value": "=demo",
+              "type": "string"
+            },
+            {
+              "id": "9d028092-f1e2-4ee0-b76d-04b92cb55724",
+              "name": "=attention_check",
+              "value": "={{ $json.labels.QID2 === \"Green\" ? \"correct\" : \"wrong\" }}",
+              "type": "string"
+            },
+            {
+              "id": "59cf2eaf-fabc-436c-a8cd-20bd46afb955",
+              "name": "=duration_sec",
+              "value": "={{ $json.values.duration }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        2256,
+        816
+      ],
+      "id": "1b538b94-1240-4cc9-9b56-ba25d0e8d1f9",
+      "name": "Map Qualtrics Fields"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "seconds",
+              "secondsInterval": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        32,
+        816
+      ],
+      "id": "53999536-05ce-4e32-94e3-4284225803f2",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        416,
+        288
+      ],
+      "id": "9b832fc3-7a83-4806-95ca-f21736a0615b",
+      "name": "Normalized Input"
+    },
+    {
+      "parameters": {
+        "maxItems": 100
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        2048,
+        816
+      ],
+      "id": "2c700212-3da4-4cf6-b553-f3c85f98eda2",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "   const sec = $input.item.json.duration_sec;\n   let readable;\n   if (sec < 60) {\n     readable = `${sec} seconds`;\n   } else {\n     const minutes = Math.round(sec / 60);\n     readable = `${minutes} minute${minutes === 1 ? '' : 's'}`;\n   }\n   return {\n     ...$input.item.json,\n     duration_readable: readable\n   };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2656,
+        288
+      ],
+      "id": "3e1feb7c-e796-44a8-ad9b-cc420309c90e",
+      "name": "Format Duration"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "01356741-64cd-44fb-bbe2-1c6d2240f679",
+              "leftValue": "={{ $json.result.status }}",
+              "rightValue": "complete",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        928,
+        816
+      ],
+      "id": "0f878374-4f6a-4820-ad3d-23297cd9f1ec",
+      "name": "If2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1152,
+        1040
+      ],
+      "id": "05d65ca6-2710-462c-9023-8c2e6b57a71e",
+      "name": "Wait1",
+      "webhookId": "a91b57d0-5a14-4797-8c0d-11ddf36a2bee"
+    },
+    {
+      "parameters": {
+        "jsCode": "const existingIds = new Set(\n  $('Get row(s) in sheet').all().map(item => item.json.response_id)\n);\nreturn $('Normalized Input').all().filter(item => !existingIds.has(item.json.response_id));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        992,
+        304
+      ],
+      "id": "aacc942c-1d8d-47f3-af48-7712783dfc74",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "trigger": [
+          "message"
+        ],
+        "channelId": {
+          "__rl": true,
+          "value": "C0C7NGG3961",
+          "mode": "list",
+          "cachedResultName": "lab-monitor-test"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.slackTrigger",
+      "typeVersion": 1,
+      "position": [
+        32,
+        640
+      ],
+      "id": "1f35f84a-7c8e-48d9-a6f6-1e189442fbcd",
+      "name": "Slack Trigger",
+      "webhookId": "3ec8b744-f082-48bc-9f72-f4f3ad499eb6",
+      "credentials": {
+        "slackApi": {
+          "id": "Mj5nPQsv8mtaZVdp",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO responses (response_id, participant_id, response_timestamp, flag, note)\nVALUES ('{{$json.response_id}}', '{{$json.participant_id}}', '{{$json.timestamp}}', '{{$json.flag}}', '{{$json.flag === \"clean\" ? \"Clean response\" : \"Flagged: \" + $json.flag}}');",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1872,
+        0
+      ],
+      "id": "792266fd-e4ec-4f43-98b0-b0c90e43f8d7",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "a3d6rk2B3HlaEg1m",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Write a brief, one-sentence, natural-language explanation for why this experiment response was flagged. Flag type: {{ $json.flag }}. Details: {{ $json.note }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        2304,
+        96
+      ],
+      "id": "dca2e452-9b8a-4347-9373-eba439e52de4",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        2272,
+        -48
+      ],
+      "id": "704f0826-ad73-4428-9387-a98ea134939a",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "tobj8RCJmrIiefI5",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0C7NGG3961",
+          "mode": "list",
+          "cachedResultName": "lab-monitor-test"
+        },
+        "text": "=🤖 AI-generated flag summary: {{ $json.text }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        2704,
+        112
+      ],
+      "id": "5b62b881-4655-49b2-8159-ba8dece17994",
+      "name": "Send a message1",
+      "webhookId": "419beb6e-6061-4019-bbbc-87a59521f373",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "slackApi": {
+          "id": "Mj5nPQsv8mtaZVdp",
+          "name": "Slack account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Normalized Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields5": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Format Duration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start Export": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Check Export Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Export Status": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Export": {
+      "main": [
+        [
+          {
+            "node": "Unzip Export",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Unzip Export": {
+      "main": [
+        [
+          {
+            "node": "Parse Responses",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Responses": {
+      "main": [
+        [
+          {
+            "node": "Split Responses",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Responses": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Start Export",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map Qualtrics Fields": {
+      "main": [
+        [
+          {
+            "node": "Normalized Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalized Input": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Map Qualtrics Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Duration": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Download Export",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Check Export Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack Trigger": {
+      "main": [
+        [
+          {
+            "node": "Start Export",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "c2faf850-4cd8-4d7e-8a70-3b98519b98b3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6e795ad00fa9b0bd674b0144b710c0e3fc95cacce8e64a4159f9cd12c828354a"
+  },
+  "nodeGroups": [],
+  "id": "Xh5DaauEQyvhBEWq",
+  "tags": []
+}

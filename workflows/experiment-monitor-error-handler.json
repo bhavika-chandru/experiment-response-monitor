@@ -1,0 +1,73 @@
+{
+  "name": "Experiment Monitor - Error Handler",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "e65b13b1-5f73-44c9-9eb9-3a0ae2a35ec8",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0C7NGG3961",
+          "mode": "list",
+          "cachedResultName": "lab-monitor-test"
+        },
+        "text": "=   Workflow failed: {{ $json.workflow.name }} — {{ $json.execution.error.message }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        224,
+        0
+      ],
+      "id": "8ff08701-cf85-41b8-a050-7778e91cd25b",
+      "name": "Send a message",
+      "webhookId": "910204d9-b760-4544-9fda-ab47464371cf",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "09EziDMpr32G8t2y",
+          "name": "Slack account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "32512e62-9941-4da3-8e52-c23157bc114e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3bc6b7a098b48e0c0f764aee8e7a96482a00f263bb948c0cb4c7b2c1c9d7f603"
+  },
+  "nodeGroups": [],
+  "id": "fTxIO30ZL60eOpZQ",
+  "tags": []
+}
