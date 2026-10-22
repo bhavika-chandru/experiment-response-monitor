@@ -45,8 +45,7 @@ See the appendix in `Experiment Response Monitor - Project Report.pdf` (in this 
 
 ## Workflow files
 
-- `workflows/experiment-response-monitor-vrac.json` — main workflow, pointed at the real VRAC experiment survey (used to demo realistic batch volume)
-- `workflows/experiment-response-monitor-demo.json` — same workflow, duplicated and pointed at a short dedicated demo survey (used for the live round-trip demo)
-- `workflows/experiment-monitor-error-handler.json` — error workflow, attached to both of the above via Settings → Error Workflow
+- `workflows/experiment-response-monitor-demo.json` — the main workflow, pointed at a dedicated demo survey (used for the live round-trip demo)
+- `workflows/experiment-monitor-error-handler.json` — error workflow, attached to the above via Settings → Error Workflow, and also callable directly via Execute Workflow node
 
 See `Experiment Response Monitor - Project Report.pdf` in this repo for the full written proposal and architecture diagram.
