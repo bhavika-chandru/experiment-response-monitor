@@ -846,6 +846,8 @@
       ],
       "id": "792266fd-e4ec-4f43-98b0-b0c90e43f8d7",
       "name": "Execute a SQL query",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000,
       "credentials": {
         "postgres": {
           "id": "a3d6rk2B3HlaEg1m",
@@ -866,7 +868,9 @@
         -176
       ],
       "id": "dca2e452-9b8a-4347-9373-eba439e52de4",
-      "name": "Basic LLM Chain"
+      "name": "Basic LLM Chain",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000
     },
     {
       "parameters": {
@@ -902,8 +906,8 @@
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.7,
       "position": [
-        2880,
-        -176
+        3024,
+        -192
       ],
       "id": "5b62b881-4655-49b2-8159-ba8dece17994",
       "name": "Send a message1",
@@ -945,6 +949,63 @@
       ],
       "id": "992b3118-8ff2-42a5-ab9e-3678d6351c71",
       "name": "Call 'Experiment Monitor - Error Handler'"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "9432e4bf-d367-4f39-bc45-028b26e5c1e8",
+              "leftValue": "={{ $json.text }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        2688,
+        -176
+      ],
+      "id": "50883eb1-0714-4f28-ac3e-0ab193cb59b0",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1d8fec92-6bce-4a96-b79a-6560f30134db",
+              "name": "text",
+              "value": "AI summary unavailable for this response.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        2864,
+        -96
+      ],
+      "id": "05af321d-50dc-4f4f-907e-89c5ce982843",
+      "name": "Edit Fields6"
     }
   ],
   "pinData": {},
@@ -1331,6 +1392,35 @@
       "main": [
         [
           {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields6": {
+      "main": [
+        [
+          {
             "node": "Send a message1",
             "type": "main",
             "index": 0
@@ -1339,12 +1429,16 @@
       ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1",
-    "binaryMode": "separate"
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "USFGfxZItLN95Xn3",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
   },
-  "versionId": "106bd0bc-82e9-4236-865e-ad11189f31b1",
+  "versionId": "f7de3802-a1a8-44e2-9d29-a2c772677e08",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "6e795ad00fa9b0bd674b0144b710c0e3fc95cacce8e64a4159f9cd12c828354a"
