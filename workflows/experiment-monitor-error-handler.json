@@ -6,15 +6,14 @@
       "type": "n8n-nodes-base.errorTrigger",
       "typeVersion": 1,
       "position": [
-        0,
-        0
+        880,
+        576
       ],
-      "id": "e65b13b1-5f73-44c9-9eb9-3a0ae2a35ec8",
+      "id": "0e820950-340a-4df0-8507-fa264cf4bcfd",
       "name": "Error Trigger"
     },
     {
       "parameters": {
-        "authentication": "oAuth2",
         "select": "channel",
         "channelId": {
           "__rl": true,
@@ -22,24 +21,37 @@
           "mode": "list",
           "cachedResultName": "lab-monitor-test"
         },
-        "text": "=   Workflow failed: {{ $json.workflow.name }} — {{ $json.execution.error.message }}",
+        "text": "=   Workflow failed: {{ $json.workflow.name }}\n   Execution: {{ $json.execution.url }}\n   Error: {{ $json.execution.error.message }}",
         "otherOptions": {}
       },
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.7,
       "position": [
-        224,
-        0
+        1104,
+        576
       ],
-      "id": "8ff08701-cf85-41b8-a050-7778e91cd25b",
+      "id": "7b2c9a08-e97b-48aa-b0dd-2c3923547151",
       "name": "Send a message",
       "webhookId": "910204d9-b760-4544-9fda-ab47464371cf",
       "credentials": {
-        "slackOAuth2Api": {
-          "id": "09EziDMpr32G8t2y",
+        "slackApi": {
+          "id": "Mj5nPQsv8mtaZVdp",
           "name": "Slack account"
         }
       }
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        896,
+        768
+      ],
+      "id": "c1342057-d57a-40ff-85d8-40f6fdffdc46",
+      "name": "When Executed by Another Workflow"
     }
   ],
   "pinData": {},
@@ -54,20 +66,35 @@
           }
         ]
       ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": true,
+  "active": false,
   "settings": {
     "executionOrder": "v1",
-    "binaryMode": "separate",
-    "availableInMCP": true
+    "binaryMode": "separate"
   },
-  "versionId": "32512e62-9941-4da3-8e52-c23157bc114e",
+  "versionId": "6a1f7fb9-d960-4daf-bde6-95429e5f9d4f",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "3bc6b7a098b48e0c0f764aee8e7a96482a00f263bb948c0cb4c7b2c1c9d7f603"
+    "instanceId": "6e795ad00fa9b0bd674b0144b710c0e3fc95cacce8e64a4159f9cd12c828354a"
   },
   "nodeGroups": [],
-  "id": "fTxIO30ZL60eOpZQ",
+  "id": "USFGfxZItLN95Xn3",
   "tags": []
 }

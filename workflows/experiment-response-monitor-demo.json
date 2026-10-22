@@ -862,8 +862,8 @@
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.9,
       "position": [
-        2304,
-        96
+        2384,
+        -176
       ],
       "id": "dca2e452-9b8a-4347-9373-eba439e52de4",
       "name": "Basic LLM Chain"
@@ -875,8 +875,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1.2,
       "position": [
-        2272,
-        -48
+        2384,
+        16
       ],
       "id": "704f0826-ad73-4428-9387-a98ea134939a",
       "name": "Google Gemini Chat Model",
@@ -902,8 +902,8 @@
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.7,
       "position": [
-        2704,
-        112
+        2880,
+        -176
       ],
       "id": "5b62b881-4655-49b2-8159-ba8dece17994",
       "name": "Send a message1",
@@ -917,6 +917,34 @@
         }
       },
       "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "USFGfxZItLN95Xn3",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/USFGfxZItLN95Xn3",
+          "cachedResultName": "Experiment Monitor - Error Handler"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        2656,
+        16
+      ],
+      "id": "992b3118-8ff2-42a5-ab9e-3678d6351c71",
+      "name": "Call 'Experiment Monitor - Error Handler'"
     }
   ],
   "pinData": {},
@@ -1083,6 +1111,11 @@
           },
           {
             "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Call 'Experiment Monitor - Error Handler'",
             "type": "main",
             "index": 0
           }
@@ -1311,7 +1344,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "c2faf850-4cd8-4d7e-8a70-3b98519b98b3",
+  "versionId": "106bd0bc-82e9-4236-865e-ad11189f31b1",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "6e795ad00fa9b0bd674b0144b710c0e3fc95cacce8e64a4159f9cd12c828354a"
