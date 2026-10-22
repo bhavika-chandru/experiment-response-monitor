@@ -6,7 +6,7 @@
 
 Qualtrics (polled on a schedule) → export job started → wait for export to complete → download + unzip + parse responses → split into individual items → duplicate check against the log → validation (incomplete / failed attention check / duration outlier / condition mismatch / clean) → log every response → Slack alert on anything flagged.
 
-See the project proposal PDF (`Experiment Response Monitor - Project Proposal.pdf`, in this repo) for the full labeled diagram and appendix screenshots.
+See the project report PDF (`Experiment Response Monitor - Project Report.pdf`, in this repo) for the full labeled diagram and appendix screenshots.
 
 A parallel error workflow (Error Trigger → Slack) is attached via workflow Settings → Error Workflow, so any unhandled failure in the main workflow also alerts separately with the workflow name and a link to the failed execution.
 
@@ -37,7 +37,7 @@ A parallel error workflow (Error Trigger → Slack) is attached via workflow Set
 
 ## Screenshots
 
-See the appendix in `Experiment Response Monitor - Project Proposal.pdf` (in this repo) for the full set of screenshots: workflow canvas, `docker compose ps` output confirming self-hosted containers, git commit history, and a live Postgres query showing responses logged across multiple flag branches.
+See the appendix in `Experiment Response Monitor - Project Report.pdf` (in this repo) for the full set of screenshots: workflow canvas, `docker compose ps` output confirming self-hosted containers, git commit history, and a live Postgres query showing responses logged across multiple flag branches.
 
 ## Workflow files
 
@@ -45,4 +45,4 @@ See the appendix in `Experiment Response Monitor - Project Proposal.pdf` (in thi
 - `workflows/experiment-response-monitor-demo.json` — same workflow, duplicated and pointed at a short dedicated demo survey (used for the live round-trip demo)
 - `workflows/experiment-monitor-error-handler.json` — error workflow, attached to both of the above via Settings → Error Workflow
 
-See `Experiment Response Monitor - Project Proposal.pdf` in this repo for the full written proposal and architecture diagram.
+See `Experiment Response Monitor - Project Report.pdf` in this repo for the full written proposal and architecture diagram.
